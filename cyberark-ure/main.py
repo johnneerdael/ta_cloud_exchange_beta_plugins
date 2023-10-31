@@ -556,8 +556,10 @@ class CyberArkPlugin(PluginBase):
     def get_protected_cyberark_headers(self, configuration: Dict):
         cyberark_service_user = {configuration.get("service_user").strip()}
         cyberark_service_password = {configuration.get("service_password").strip()}
-        
-        url = "{0}/oauth2/token/ciamapisvc".format({configuration.get("url").strip()})
+        url = (
+            f"{configuration.get('url', '').strip().rstrip('/')}"
+            f"/oauth2/token/ciamapisvc"
+        )
         body = "grant_type=client_credentials&scope=all"
         
         cyberark_oauth_headers = {
