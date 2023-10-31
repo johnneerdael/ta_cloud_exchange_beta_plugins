@@ -1,34 +1,35 @@
 {
-    "name": "Okta",
-    "description": "Add users to a group on Okta.",
-    "id": "okta_cre",
-    "type": [],
-    "netskope": false,
-    "version": "1.0.1",
+    "name": "Cyberark URE",
+    "description": "Performs actions on users in Cyberark based on a \n\n URE score calculation => RiskLevel None: N/A, RiskLevel hidden: N/A, RiskLevel unknownFutureValue: N/A, RiskLevel low: 875, RiskLevel medium: 625, RiskLevel high: 375.",
+    "id": "cyberark_ure",
+    "type": [
+        "user"
+    ],
+    "version": "1.0.0",
     "configuration": [
         {
-            "label": "CyberArk Domain",
-            "key": "url",
+            "label": "Username",
+            "key": "client_id",
             "type": "text",
             "default": "",
             "mandatory": true,
-            "description": "Your CyberArk domain. e.g. https://<your-okta-domain>"
+            "description": "Username for Cyberark"
         },
         {
-            "label": "CyberArk Service User",
-            "key": "service_user",
+            "label": "Password",
+            "key": "client_secret",
             "type": "password",
             "default": "",
             "mandatory": true,
-            "description": "Your CyberArk Service User."
+            "description": "Password for Cyberark"
         },
         {
-            "label": "CyberArk Service Password",
-            "key": "service_password",
-            "type": "password",
+            "label": "URL",
+            "key": "tenant_id",
+            "type": "text",
             "default": "",
             "mandatory": true,
-            "description": "Your CyberArk Service Password."
+            "description": "Tenant URL for Cyberark"
         }
     ]
 }

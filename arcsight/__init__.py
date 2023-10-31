@@ -1,1 +1,0 @@
-"""ArcSight plugin."""
