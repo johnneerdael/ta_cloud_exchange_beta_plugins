@@ -52,11 +52,31 @@ from netskope.integrations.cre.models import (
     Action,
 )
 
-PLUGIN_NAME = "CyberArk URE Plugin"
-
+PLATFORM_NAME= "Cyberark"
+MODULE_NAME = "URE"
+PLUGIN_VERSION = "1.0.0"
 
 class CyberArkPlugin(PluginBase):
     """CyberArk plugin implementation."""
+    
+    def __init__(
+        self,
+        name,
+        *args,
+        **kwargs,
+    ):
+        """Init method.
+
+        Args:
+            name (str): Configuration name.
+        """
+        super().__init__(
+            name,
+            *args,
+            **kwargs,
+        )
+        self.plugin_name, self.plugin_version = self._get_plugin_info()
+        self.log_prefix = f"{MODULE_NAME} {self.plugin_name} [{name}]"
 
     def fetch_records(self) -> List[Record]:
         """Pull Records from CyberArk.
@@ -65,6 +85,34 @@ class CyberArkPlugin(PluginBase):
             List[Record]: List of records to be stored on the platform.
         """
         return []
+
+    def _get_plugin_info(self) -> tuple:
+        """Get plugin name and version from manifest.
+
+        Returns:
+            tuple: Tuple of plugin's name and version fetched from manifest.
+        """
+        try:
+            file_path = os.path.join(
+                str(os.path.dirname(os.path.abspath(__file__))),
+                "manifest.json",
+            )
+            with open(file_path, "r") as manifest:
+                manifest_json = json.load(manifest)
+                plugin_name = manifest_json.get("name", PLATFORM_NAME)
+                plugin_version = manifest_json.get("version", PLUGIN_VERSION)
+                return (plugin_name, plugin_version)
+        except Exception as exp:
+            self.logger.info(
+                message=(
+                    "{} {}: Error occurred while"
+                    " getting plugin details. Error: {}".format(
+                        MODULE_NAME, PLATFORM_NAME, exp
+                    )
+                ),
+                details=traceback.format_exc(),
+            )
+        return (PLATFORM_NAME, PLUGIN_VERSION)
 
     def fetch_scores(self, records: List[Record]) -> List[Record]:
         """Fetch user scores.
@@ -99,12 +147,35 @@ class CyberArkPlugin(PluginBase):
             }
 
         response = requests.post(url, body, headers)
-       
-        if response["success"] == "false":
-            raise HTTPError(
-                f"Group or User does not exist on CyberArk."
-            )
         response.raise_for_status()
+        if response.status_code == 204:
+            # We return because there is an empty JSON response
+            # So it is successful and we do not need to anything
+            # more after adding the member to group
+            self.logger.info(
+                f"{self.log_prefix}: Successfully added {logger_msg}."
+            )
+            return
+        elif response.status_code == 400:
+            resp_json = self.parse_response(response=response)
+            api_err_msg = resp_json.get(
+                "error", "No error details found in API response."
+            )
+            self.logger.warn(
+                (
+                    "{}: Unable to add {}. This error may occur if user "
+                    "already exist in group. Error: {}".format(
+                        self.log_prefix,
+                        logger_msg,
+                        str(api_err_msg),
+                    )
+                )
+            )
+            return
+
+        self.handle_error(
+            response, logger_msg
+        )  # For capturing unexpected errors
 
     def _remove_from_group(
         self, configuration: Dict, user_id: str, group_id: str):
@@ -129,12 +200,31 @@ class CyberArkPlugin(PluginBase):
             }
 
         response = requests.post(url, body, headers)
-       
-        if response["success"] == "false":
-            raise HTTPError(
-                f"Group or User does not exist on CyberArk."
-            )
         response.raise_for_status()
+        if response.status_code == 204:
+            self.logger.info(
+                "{}: Successfully removed {}.".format(
+                    self.log_prefix, logger_msg
+                )
+            )
+            return
+
+        elif response.status_code == 404:
+            resp_json = self.parse_response(response=response)
+            api_err_msg = resp_json.get(
+                "error", "No error details found in API response."
+            )
+            err_msg = (
+                "{}: Unable to remove {}. This error may occur if user does"
+                " not exist in the group. Error: {}".format(
+                    self.log_prefix,
+                    logger_msg,
+                    api_err_msg,
+                )
+            )
+            self.logger.warn(err_msg)
+            return
+
 
     def _get_all_groups(self, configuration: Dict) -> List:
         """Get list of all the groups.
@@ -146,13 +236,44 @@ class CyberArkPlugin(PluginBase):
             List: List of all the groups.
         """
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
-        url = "{base_url}/RedRock/query".format(
-            base_url={configuration.get("url").strip()})
+        url = "{base_url}/RedRock/query".format(base_url={configuration.get("url").strip()})
             
         body = "{'Script': 'Select * from Role order by Name'}"
 
         all_groups = requests.post(url, body, headers)
         return all_groups["Results"]["Results"]
+        if response.status_code in [200, 201]:
+            self.logger.info(
+                "{}: Successfully created group named '{}' of type '{}' on "
+                "{} platform.".format(
+                    self.log_prefix, group_name, group_type, PLATFORM_NAME
+                )
+            )
+            response_json = self.parse_response(response=response)
+            return {
+                "id": response_json.get("id"),  # Group ID
+                "displayName": response_json.get("displayName"),  # Group Name
+            }
+
+        elif response.status_code == 400:
+            resp_json = self.parse_response(response=response)
+            err_msg = (
+                "Unable to create group named '{}' on "
+                "{} platform.".format(group_name, PLATFORM_NAME)
+            )
+            self.logger.error(
+                message=f"{self.log_prefix}: {err_msg}",
+                details=str(
+                    resp_json.get(
+                        "error", "No error details found in API response."
+                    )
+                ),
+            )
+            raise MicrosoftAzureADException(err_msg)
+
+        return self.handle_error(
+            response, logger_msg
+        )  # For capturing any unexpected error.
 
     def _get_all_users(self, configuration: Dict) -> List:
         """Get list of all the users.
