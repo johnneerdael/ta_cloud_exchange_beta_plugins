@@ -1,7 +1,7 @@
 {
-    "name": "Microsoft Azure AD",
-    "description": "Fetches users and their respective scores from Microsoft Azure AD platform and also performs actions on them. \n\n URE score calculation => RiskLevel None: N/A, RiskLevel hidden: N/A, RiskLevel unknownFutureValue: N/A, RiskLevel low: 875, RiskLevel medium: 625, RiskLevel high: 375.",
-    "id": "microsoft_azure_AD",
+    "name": "Cyberark URE",
+    "description": "Performs actions on users in Cyberark based on a \n\n URE score calculation => RiskLevel None: N/A, RiskLevel hidden: N/A, RiskLevel unknownFutureValue: N/A, RiskLevel low: 875, RiskLevel medium: 625, RiskLevel high: 375.",
+    "id": "cyberark_ure",
     "type": [
         "user"
     ],
@@ -13,7 +13,7 @@
             "type": "text",
             "default": "",
             "mandatory": true,
-            "description": "Application ID for Microsoft Azure AD."
+            "description": "Username for Cyberark"
         },
         {
             "label": "Client Secret",
@@ -21,7 +21,7 @@
             "type": "password",
             "default": "",
             "mandatory": true,
-            "description": "Secret value of your Client (Application) ID for Microsoft Azure AD."
+            "description": "Password for Cyberark"
         },
         {
             "label": "Tenant ID",
@@ -29,7 +29,7 @@
             "type": "text",
             "default": "",
             "mandatory": true,
-            "description": "Tenant ID of your Microsoft account."
+            "description": "Tenant URL for Cyberark"
         }
     ]
 }

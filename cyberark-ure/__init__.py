@@ -1,1 +1,1 @@
-"""CyberArk CRE plugin package."""
+"""CyberArk URE Plugin"""
