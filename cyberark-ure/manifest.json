@@ -9,7 +9,7 @@
     "configuration": [
         {
             "label": "Username",
-            "key": "client_id",
+            "key": "service_user",
             "type": "text",
             "default": "",
             "mandatory": true,
@@ -17,7 +17,7 @@
         },
         {
             "label": "Password",
-            "key": "client_secret",
+            "key": "service_password",
             "type": "password",
             "default": "",
             "mandatory": true,
@@ -25,7 +25,7 @@
         },
         {
             "label": "URL",
-            "key": "tenant_id",
+            "key": "url",
             "type": "text",
             "default": "",
             "mandatory": true,
