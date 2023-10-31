@@ -1,0 +1,34 @@
+{
+    "name": "Okta",
+    "description": "Add users to a group on Okta.",
+    "id": "okta_cre",
+    "type": [],
+    "netskope": false,
+    "version": "1.0.1",
+    "configuration": [
+        {
+            "label": "CyberArk Domain",
+            "key": "url",
+            "type": "text",
+            "default": "",
+            "mandatory": true,
+            "description": "Your CyberArk domain. e.g. https://<your-okta-domain>"
+        },
+        {
+            "label": "CyberArk Service User",
+            "key": "service_user",
+            "type": "password",
+            "default": "",
+            "mandatory": true,
+            "description": "Your CyberArk Service User."
+        },
+        {
+            "label": "CyberArk Service Password",
+            "key": "service_password",
+            "type": "password",
+            "default": "",
+            "mandatory": true,
+            "description": "Your CyberArk Service Password."
+        }
+    ]
+}
