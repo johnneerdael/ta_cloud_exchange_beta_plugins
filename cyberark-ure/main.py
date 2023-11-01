@@ -518,41 +518,28 @@ class CyberArkPlugin(PluginBase):
 
         return self._validate_auth(configuration)
       
-       
-
-    @staticmethod  
-    def get_protected_cyberark_headers(self, configuration: Dict):
-        cyberark_service_user = {configuration["service_user"].strip()}
-        cyberark_service_password = {configuration["service_password"].strip()}
-        url = (
-            f"{configuration['url'].strip().rstrip('/')}"
-            f"/oauth2/token/ciamapisvc"
-        )
-        body = "grant_type=client_credentials&scope=all"
-        
-        cyberark_oauth_headers = {
-            "Accept": "application/json",
-            "Content-Type": "application/x-www-form-urlencoded",
-        }
-
-        cyberark_oauth_headers["Authorization"] = "Basic {0}".format(CyberArkPlugin.get_encoded_auth(cyberark_service_user, cyberark_service_password))
-        
-        rest_response = requests.post(url=url, headers=cyberark_oauth_headers, data=body)
-        bearer_response = rest_response.json()
-        
-        cyberark_protected_headers = {
-            "Authorization": "Bearer {0}".format(bearer_response["access_token"])
-        }
-
-        return cyberark_protected_headers
-
     @staticmethod
     def get_encoded_auth(client_id, client_secret):
-        auth_raw = "{client_id}:{client_secret}".format(
-            client_id=client_id,
-            client_secret=client_secret
-        )
-
-        encoded_auth = base64.b64encode(bytes(auth_raw, 'UTF-8')).decode("UTF-8")
-
-        return encoded_auth
+    	auth_raw = "{client_id}:{client_secret}".format(client_id=client_id,client_secret=client_secret)
+    	encoded_auth = base64.b64encode(bytes(auth_raw, 'UTF-8')).decode("UTF-8")
+    	return encoded_auth     
+     
+    @staticmethod  
+    def get_protected_cyberark_headers(configuration: Dict):
+    	cyberark_service_user = str({configuration["service_user"]}).strip("{'").strip("'}")
+    	cyberark_service_password = str({configuration["service_password"]}).strip("{'").strip("'}")
+    	url = f"{configuration['url'].strip().rstrip('/')}" + "/oauth2/token/ciamapisvc"
+    	body = "grant_type=client_credentials&scope=all"
+    	cyberark_oauth_headers = {
+    		"Accept": "application/json",
+    		"Content-Type": "application/x-www-form-urlencoded",
+    	}
+     
+    	cyberark_oauth_headers["Authorization"] = "Basic {0}".format(get_encoded_auth(cyberark_service_user, cyberark_service_password))
+    	rest_response = requests.post(url=url, headers=cyberark_oauth_headers, data=body)
+    	bearer_response = rest_response.json()
+    	print(bearer_response) 
+    	cyberark_protected_headers = {
+    		"Authorization": "Bearer {0}".format(bearer_response["access_token"])
+    		}
+    	return cyberark_protected_headers
