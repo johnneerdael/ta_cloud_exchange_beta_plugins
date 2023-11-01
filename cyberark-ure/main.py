@@ -518,7 +518,7 @@ class CyberArkPlugin(PluginBase):
 
         return self._validate_auth(configuration)
       
-  
+    @staticmethod    
     def get_protected_cyberark_headers(self, configuration: Dict):
     	cyberark_service_user = str({configuration["service_user"]}).strip("{'").strip("'}")
     	cyberark_service_password = str({configuration["service_password"]}).strip("{'").strip("'}")
