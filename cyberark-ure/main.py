@@ -528,8 +528,9 @@ class CyberArkPlugin(PluginBase):
     		"Accept": "application/json",
     		"Content-Type": "application/x-www-form-urlencoded",
     	}
-     
-    	cyberark_oauth_headers["Authorization"] = "Basic {0}".format(get_encoded_auth(cyberark_service_user, cyberark_service_password))
+        auth_raw = "{client_id}:{client_secret}".format(client_id=cyberark_service_password,client_secret=cyberark_service_password)"
+        encoded_auth = base64.b64encode(bytes(auth_raw, 'UTF-8')).decode("UTF-8")
+    	cyberark_oauth_headers["Authorization"] = "Basic {0}".format(encoded_auth)
     	rest_response = requests.post(url=url, headers=cyberark_oauth_headers, data=body)
     	bearer_response = rest_response.json()
     	print(bearer_response) 
@@ -537,8 +538,3 @@ class CyberArkPlugin(PluginBase):
     		"Authorization": "Bearer {0}".format(bearer_response["access_token"])
     		}
     	return cyberark_protected_headers
-    	
-    def get_encoded_auth(client_id, client_secret):
-    	auth_raw = "{client_id}:{client_secret}".format(client_id=client_id,client_secret=client_secret)
-    	encoded_auth = base64.b64encode(bytes(auth_raw, 'UTF-8')).decode("UTF-8")
-    	return encoded_auth     
