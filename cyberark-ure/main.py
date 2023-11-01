@@ -533,7 +533,7 @@ class CyberArkPlugin(PluginBase):
     		"Accept": "application/json",
     		"Content-Type": "application/x-www-form-urlencoded",
     	}
-        cyberark_oauth_headers["Authorization"] = "Basic {0}".format(get_encoded_auth(cyberark_service_user, cyberark_service_password))
+        cyberark_oauth_headers["Authorization"] = "Basic {0}".format(self, get_encoded_auth(cyberark_service_user, cyberark_service_password))
         rest_response = requests.post(url=url, headers=cyberark_oauth_headers, data=body)
         bearer_response = rest_response.json()
         cyberark_protected_headers = {
