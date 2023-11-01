@@ -525,7 +525,7 @@ class CyberArkPlugin(PluginBase):
     	return encoded_auth     
      
     @staticmethod  
-    def get_protected_cyberark_headers(configuration: Dict):
+    def get_protected_cyberark_headers(self, configuration: Dict):
     	cyberark_service_user = str({configuration["service_user"]}).strip("{'").strip("'}")
     	cyberark_service_password = str({configuration["service_password"]}).strip("{'").strip("'}")
     	url = f"{configuration['url'].strip().rstrip('/')}" + "/oauth2/token/ciamapisvc"
