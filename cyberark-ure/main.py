@@ -452,15 +452,18 @@ class CyberArkPlugin(PluginBase):
 
     def _validate_auth(self, configuration):
         """Validate CyberArk credentials."""
-        
-        
+
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
+
+        self.logger.error(
+            "Plugin check" + str(headers)
+        )
+
         url = "{base_url}/UserMgmt/GetUserInfo".format(
             base_url=f"{configuration['url'].strip().rstrip('/')}")
-        body = {}
-       
+
         try:
-            response = requests.post(url, body, headers)
+            response = requests.post(url=url,headers=headers, data="")
             response.raise_for_status()
             if response.status_code in [200, 201]:
                 return ValidationResult(
