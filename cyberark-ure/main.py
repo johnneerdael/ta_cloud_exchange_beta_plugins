@@ -143,7 +143,7 @@ class CyberArkPlugin(PluginBase):
         """
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
         url = "{base_url}/SaasManage/AddUsersAndGroupsToRole".format(
-            base_url={configuration.get("url").strip()})
+            base_url={configuration["url"].strip()})
         body = {
               "Users": [
                 user_id
@@ -196,7 +196,7 @@ class CyberArkPlugin(PluginBase):
         """
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
         url = "{base_url}/SaasManage/RemoveUsersAndGroupsFromRole".format(
-            base_url={configuration.get("url").strip()})
+            base_url={configuration["url"].strip()})
         body = {
               "Users": [
                 user_id
@@ -241,45 +241,13 @@ class CyberArkPlugin(PluginBase):
             List: List of all the groups.
         """
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
-        url = "{base_url}/RedRock/query".format(base_url={configuration.get("url").strip()})
+        url = "{base_url}/RedRock/query".format(base_url={configuration["url"].strip()})
             
         body = "{'Script': 'Select * from Role order by Name'}"
 
         all_groups = requests.post(url, body, headers)
         return all_groups["Results"]["Results"]
-        if response.status_code in [200, 201]:
-            self.logger.info(
-                "{}: Successfully created group named '{}' of type '{}' on "
-                "{} platform.".format(
-                    self.log_prefix, group_name, group_type, PLATFORM_NAME
-                )
-            )
-            response_json = self.parse_response(response=response)
-            return {
-                "id": response_json.get("id"),  # Group ID
-                "displayName": response_json.get("displayName"),  # Group Name
-            }
-
-        elif response.status_code == 400:
-            resp_json = self.parse_response(response=response)
-            err_msg = (
-                "Unable to create group named '{}' on "
-                "{} platform.".format(group_name, PLATFORM_NAME)
-            )
-            self.logger.error(
-                message=f"{self.log_prefix}: {err_msg}",
-                details=str(
-                    resp_json.get(
-                        "error", "No error details found in API response."
-                    )
-                ),
-            )
-            raise MicrosoftAzureADException(err_msg)
-
-        return self.handle_error(
-            response, logger_msg
-        )  # For capturing any unexpected error.
-
+        
     def _get_all_users(self, configuration: Dict) -> List:
         """Get list of all the users.
 
@@ -291,7 +259,7 @@ class CyberArkPlugin(PluginBase):
         """
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
         url = "{base_url}/RedRock/query".format(
-            base_url={configuration.get("url").strip()})
+            base_url={configuration["url"].strip()})
             
         body = "{'Script': 'Select * from Users'}"
 
@@ -311,7 +279,7 @@ class CyberArkPlugin(PluginBase):
         
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
         url = "{base_url}/RedRock/query".format(
-            base_url={configuration.get("url").strip()})
+            base_url={configuration["url"].strip()})
             
         body = "{'Script': 'select * from Users where Username = '" + username +"'}"
 
@@ -329,7 +297,7 @@ class CyberArkPlugin(PluginBase):
         """
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
         url = "{base_url}/RedRock/query".format(
-            base_url={configuration.get("url").strip()})
+            base_url={configuration["url"].strip()})
             
         body = "{'Script': 'select * from Roles where name = '" + name +"'}"
 
@@ -357,7 +325,7 @@ class CyberArkPlugin(PluginBase):
         """
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
         url = "{base_url}/Roles/StoreRole".format(
-            base_url={configuration.get("url").strip()})
+            base_url={configuration["url"].strip()})
         body = {
               "Description": name,
               "Name": "Created From Netskop URE"
@@ -487,7 +455,7 @@ class CyberArkPlugin(PluginBase):
         
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
         url = "{base_url}/UserMgmt/GetUserInfo ".format(
-            base_url={configuration.get("url").strip()})
+            base_url={configuration["url"].strip()})
         body = {}
        
         try:
@@ -554,10 +522,10 @@ class CyberArkPlugin(PluginBase):
 
     @staticmethod  
     def get_protected_cyberark_headers(self, configuration: Dict):
-        cyberark_service_user = {configuration.get("service_user").strip()}
-        cyberark_service_password = {configuration.get("service_password").strip()}
+        cyberark_service_user = {configuration["service_user"].strip()}
+        cyberark_service_password = {configuration["service_password"].strip()}
         url = (
-            f"{configuration.get('url', '').strip().rstrip('/')}"
+            f"{configuration['url'].strip().rstrip('/')}"
             f"/oauth2/token/ciamapisvc"
         )
         body = "grant_type=client_credentials&scope=all"
