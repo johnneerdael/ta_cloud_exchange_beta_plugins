@@ -455,7 +455,7 @@ class CyberArkPlugin(PluginBase):
         
         
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
-        url = "{base_url}/UserMgmt/GetUserInfo ".format(
+        url = "{base_url}/UserMgmt/GetUserInfo".format(
             base_url=f"{configuration['url'].strip().rstrip('/')}")
         body = {}
        
