@@ -57,9 +57,10 @@ from netskope.integrations.cre.models import (
     Action,
 )
 
-PLATFORM_NAME= "Cyberark"
+PLATFORM_NAME= "CyberArk"
 MODULE_NAME = "URE"
 PLUGIN_VERSION = "1.0.0"
+PLUGIN_NAME = "CyberArk URE Plugin"
 
 class CyberArkPlugin(PluginBase):
     """CyberArk plugin implementation."""
