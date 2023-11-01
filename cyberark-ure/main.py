@@ -1,3 +1,111 @@
+
+ Gesprek geopend. 6 berichten. 1 bericht ongelezen.
+
+Spring naar content
+Mail van Netskope gebruiken met schermlezers
+
+1 van 7.176
+Tech Alliances
+Extern
+Inbox
+
+John Neerdael
+ma 30 okt 17:05 (2 dagen geleden)
+Hi Dan, Once you're ready with your script, if you don't mind I'll put it on my github and commit to Netskope OSS, it will take some time for QA etc before they
+3
+
+Dan Zadik
+Bijlagen16:27 (3 uur geleden)
+Updated main.txt. From: John Neerdael <jneerdael@netskope.com> The attachments worked :) the login doesn't. John Neerdael Solutions Engineer jneerdael@netskope.
+
+Dan Zadik
+Bijlagen
+20:02 (5 minuten geleden)
+aan mij, Alex, Dennis, Scott
+
+   
+Bericht vertalen
+Uitzetten voor: Engels
+Updated Code fix.
+
+ 
+
+Sincerely,
+
+Dan
+
+ 
+
+Dan Zadik
+
+Sr. Solution Strategist and Architect 
+
+CyberArk - CIAM
+
+M: 512-573-1882
+
+ 
+
+ 
+
+From: John Neerdael <jneerdael@netskope.com>
+Date: Tuesday, October 31, 2023 at 12:00 PM
+To: Dan Zadik <Dan.Zadik@cyberark.com>
+Cc: Alex Woodrow <Alex.Woodrow@cyberark.com>, Dennis Verhoeven <Dennis.Verhoeven@cyberark.com>, Scott Cornfield <Scott.Cornfield@cyberark.com>
+Subject: Re: [EXTERNAL] Re: Tech Alliances
+
+ 
+
+CyberArk Security Warning: This is an external email!
+
+ 
+
+The attachments worked :) the login doesn't.
+
+John Neerdael
+
+Solutions Engineer
+
+__________________
+
+ 
+
+jneerdael@netskope.com
+
+https://www.netskope.com/
+
+ 
+
+ 
+
+Image removed by sender.
+
+ 
+
+ 
+
+
+
+JOHN NEERDAEL
+Solutions Engineer
+
+  
+
+
+jneerdael@netskope.com | 31655465914
+https://www.netskope.com/
+
+
+
+ Eén bijlage
+  • Gescand door Gmail
+Success!Looks great!Glad it worked!
+Opstellen:
+Nieuw bericht
+MinimaliserenVergrotenSluiten
+Opstellen:
+Nieuw bericht
+MinimaliserenVergrotenSluiten
 """
 BSD 3-Clause License
 
@@ -144,7 +252,7 @@ class CyberArkPlugin(PluginBase):
         """
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
         url = "{base_url}/SaasManage/AddUsersAndGroupsToRole".format(
-            base_url={configuration["url"].strip()})
+            base_url=f"{configuration['url'].strip().rstrip('/')}")
         body = {
               "Users": [
                 user_id
@@ -197,7 +305,7 @@ class CyberArkPlugin(PluginBase):
         """
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
         url = "{base_url}/SaasManage/RemoveUsersAndGroupsFromRole".format(
-            base_url={configuration["url"].strip()})
+            base_url=f"{configuration['url'].strip().rstrip('/')}")
         body = {
               "Users": [
                 user_id
@@ -242,7 +350,7 @@ class CyberArkPlugin(PluginBase):
             List: List of all the groups.
         """
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
-        url = "{base_url}/RedRock/query".format(base_url={configuration["url"].strip()})
+        url = "{base_url}/RedRock/query".format(base_url=f"{configuration['url'].strip().rstrip('/')}")
             
         body = "{'Script': 'Select * from Role order by Name'}"
 
@@ -260,7 +368,7 @@ class CyberArkPlugin(PluginBase):
         """
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
         url = "{base_url}/RedRock/query".format(
-            base_url={configuration["url"].strip()})
+            base_url=f"{configuration['url'].strip().rstrip('/')}")
             
         body = "{'Script': 'Select * from Users'}"
 
@@ -280,7 +388,7 @@ class CyberArkPlugin(PluginBase):
         
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
         url = "{base_url}/RedRock/query".format(
-            base_url={configuration["url"].strip()})
+            base_url=f"{configuration['url'].strip().rstrip('/')}")
             
         body = "{'Script': 'select * from Users where Username = '" + username +"'}"
 
@@ -298,7 +406,7 @@ class CyberArkPlugin(PluginBase):
         """
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
         url = "{base_url}/RedRock/query".format(
-            base_url={configuration["url"].strip()})
+            base_url=f"{configuration['url'].strip().rstrip('/')}")
             
         body = "{'Script': 'select * from Roles where name = '" + name +"'}"
 
@@ -326,7 +434,7 @@ class CyberArkPlugin(PluginBase):
         """
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
         url = "{base_url}/Roles/StoreRole".format(
-            base_url={configuration["url"].strip()})
+            base_url=f"{configuration['url'].strip().rstrip('/')}")
         body = {
               "Description": name,
               "Name": "Created From Netskop URE"
@@ -456,7 +564,7 @@ class CyberArkPlugin(PluginBase):
         
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
         url = "{base_url}/UserMgmt/GetUserInfo ".format(
-            base_url={configuration["url"].strip()})
+            base_url=f"{configuration['url'].strip().rstrip('/')}")
         body = {}
        
         try:
@@ -542,3 +650,5 @@ class CyberArkPlugin(PluginBase):
     	auth_raw = "{client_id}:{client_secret}".format(client_id=client_id,client_secret=client_secret)
     	encoded_auth = base64.b64encode(bytes(auth_raw, 'UTF-8')).decode("UTF-8")
     	return encoded_auth
+main.txt
+main.txt wordt weergegeven. 
