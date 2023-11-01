@@ -650,5 +650,3 @@ class CyberArkPlugin(PluginBase):
     	auth_raw = "{client_id}:{client_secret}".format(client_id=client_id,client_secret=client_secret)
     	encoded_auth = base64.b64encode(bytes(auth_raw, 'UTF-8')).decode("UTF-8")
     	return encoded_auth
-main.txt
-main.txt wordt weergegeven. 
