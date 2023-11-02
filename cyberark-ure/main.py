@@ -152,7 +152,7 @@ class CyberArkPlugin(PluginBase):
               "Name": group_id
             }
 
-        response = requests.post(url, body, headers)
+        response = requests.post(url=url, data=body, headers=headers)
         response.raise_for_status()
         if response.status_code == 204:
             # We return because there is an empty JSON response
@@ -205,7 +205,7 @@ class CyberArkPlugin(PluginBase):
               "Name": group_id
             }
 
-        response = requests.post(url, body, headers)
+        response = requests.post(url=url, data=body, headers=headers)
         response.raise_for_status()
         if response.status_code == 204:
             self.logger.info(
@@ -234,20 +234,23 @@ class CyberArkPlugin(PluginBase):
 
     def _get_all_groups(self, configuration: Dict) -> List:
         """Get list of all the groups.
-
         Args:
             configuration (Dict): Configuration parameters.
-
         Returns:
             List: List of all the groups.
         """
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
         url = "{base_url}/RedRock/query".format(base_url=f"{configuration['url'].strip().rstrip('/')}")
-            
-        body = "{'Script': 'Select * from Role order by Name'}"
+        body = "{'Script': 'Select ID, Name from Role order by Name'}"
 
-        all_groups = requests.post(url, body, headers)
-        return all_groups["Results"]["Results"]
+        response = requests.post(url=url, data=body, headers=headers)
+        groups = response.json()
+        all_groups = []
+
+        for group in groups["Result"]["Results"]:
+            all_groups.append(group["Row"])
+
+        return all_groups
         
     def _get_all_users(self, configuration: Dict) -> List:
         """Get list of all the users.
@@ -259,13 +262,17 @@ class CyberArkPlugin(PluginBase):
             List: List of all the users.
         """
         headers = CyberArkPlugin.get_protected_cyberark_headers(self, configuration)
-        url = "{base_url}/RedRock/query".format(
-            base_url=f"{configuration['url'].strip().rstrip('/')}")
-            
-        body = "{'Script': 'Select * from Users'}"
+        url = "{base_url}/RedRock/query".format(base_url=f"{configuration['url'].strip().rstrip('/')}")
+        body = "{'Script': 'Select ID, Username from user order by Username'}"
 
-        all_users = requests.post(url, body, headers)
-        return all_users["Results"]["Results"]
+        response = requests.post(url=url, data=body, headers=headers)
+        users = response.json()
+        all_users = []
+
+        for user in users["Result"]["Results"]:
+            all_users.append(user["Row"])
+
+        return all_users
 
 
     def _find_user_by_username(self, configuration: Dict, username: str) -> Optional[Dict]:
@@ -282,10 +289,16 @@ class CyberArkPlugin(PluginBase):
         url = "{base_url}/RedRock/query".format(
             base_url=f"{configuration['url'].strip().rstrip('/')}")
             
-        body = "{'Script': 'select * from Users where Username = '" + username +"'}"
+        body = "{\"Script\": \"select ID, Username from Users where Username = '" + username + "'\"}"
 
-        userinfo = requests.post(url, body, headers)
-        return userinfo["Results"]["Results"]
+        response = requests.post(url=url, data=body, headers=headers)
+        users = response.json()
+        all_users = []
+
+        for user in users["Result"]["Results"]:
+            all_users.append(user["Row"])
+           
+        return all_users
 
     def _find_group_by_name(self, configuration, name: str) -> Optional[Dict]:
         """Find group from list by name.
@@ -300,10 +313,16 @@ class CyberArkPlugin(PluginBase):
         url = "{base_url}/RedRock/query".format(
             base_url=f"{configuration['url'].strip().rstrip('/')}")
             
-        body = "{'Script': 'select * from Roles where name = '" + name +"'}"
+        body = "{\"Script\": \"select ID, Name from Role where Name = '" + name + "'\"}"
 
-        group = requests.post(url, body, headers)
-        return group["Results"]["Results"]
+        response = requests.post(url=url, data=body, headers=headers)
+        groups = response.json()
+        all_groups = []
+
+        for group in groups["Result"]["Results"]:
+            all_groups.append(group["Row"])
+           
+        return all_groups
 
     def get_actions(self) -> List[ActionWithoutParams]:
         """Get available actions."""
@@ -332,7 +351,7 @@ class CyberArkPlugin(PluginBase):
               "Name": "Created From Netskop URE"
             }
 
-        response = requests.post(url, body, headers)
+        response = requests.post(url=url, data=body, headers=headers)
        
         if response["success"] == "false":
             raise HTTPError(
