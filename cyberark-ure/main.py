@@ -380,13 +380,16 @@ class CyberArkPlugin(PluginBase):
                 match_group = self._find_group_by_name(self.configuration, group_name)
                 if match_group is None:  # create group
                     group = self._create_group(self.configuration, group_name)
-                    group_id = group["Result"]["_RowKey"]
+                    group_id = group["ID"]
                 else:
-                    group_id = match_group["Result"]["Results"]['Row']["DirectoryServiceUuid"]
-            self._add_to_group(self.configuration, match["Result"]["Results"][0]['Row']["ID"], group_id)
+                    group_id = match_group["ID"]
+            self._add_to_group(self.configuration, match["ID"], group_id)
+            self.logger.info(
+                f"{PLUGIN_NAME}: Added {user} from group with ID {action.parameters.get('group')}."
+            )
         elif action.value == "remove":
             self._remove_from_group(
-                self.configuration, match["id"], action.parameters.get("group")
+                self.configuration, match["ID"], action.parameters.get("group")
             )
             self.logger.info(
                 f"{PLUGIN_NAME}: Removed {user} from group with ID {action.parameters.get('group')}."
@@ -404,11 +407,10 @@ class CyberArkPlugin(PluginBase):
                     "key": "group",
                     "type": "choice",
                     "choices": [
-                        {"key": g["Row"]["Name"], "value": g["Row"]["DirectoryServiceUuid"]}
-                        for g in groups
+                        {"key": g["Name"], "value": str(g["ID"])} for g in groups
                     ]
                     + [{"key": "Create new group", "value": "create"}],
-                    "default": groups[0]["Row"]["DirectoryServiceUuid"],
+                    "default": str(groups[0]["ID"]),
                     "mandatory": True,
                     "description": "Select a group to add the user to.",
                 },
@@ -428,10 +430,9 @@ class CyberArkPlugin(PluginBase):
                     "key": "group",
                     "type": "choice",
                     "choices": [
-                        {"key": g["Row"]["Name"], "value": g["Row"]["DirectoryServiceUuid"]}
-                        for g in groups
+                        {"key": g["Name"], "value": str(g["ID"])} for g in groups
                     ],
-                    "default": groups[0]["Row"]["DirectoryServiceUuid"],
+                    "default": str(groups[0]["ID"]),
                     "mandatory": True,
                     "description": "Select a group to remove the user from.",
                 }
